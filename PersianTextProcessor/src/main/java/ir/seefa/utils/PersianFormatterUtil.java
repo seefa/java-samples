@@ -1,5 +1,7 @@
 package ir.seefa.utils;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +13,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @since 18 Jan 2017
  */
-public class PersianFormatterUtil {
+class PersianFormatterUtil implements PersianFormatter {
 
     /**
      * This method used for convert special Persian number charsets to Latin unicode
@@ -19,7 +21,8 @@ public class PersianFormatterUtil {
      * @param persianNumberText input Persian number charsets
      * @return converted String Persian number charsets to Latin unicode
      */
-    public static String convertNumberChars(String persianNumberText) {
+    @NotNull
+    private static String convertNumberChars(String persianNumberText) {
         persianNumberText = persianNumberText
                 .replace('\u06F0', '\u0030')
                 .replace('\u06F1', '\u0031')
@@ -53,7 +56,8 @@ public class PersianFormatterUtil {
      * @param persianCharsText Persian characters to supported ones
      * @return converted String after replacing supported characters
      */
-    public static String convertSpecialChars(String persianCharsText) {
+    @NotNull
+    private static String convertSpecialChars(String persianCharsText) {
 
         persianCharsText = persianCharsText
                 .replace('\u061F', '\u003F')    // Question mark
@@ -81,7 +85,8 @@ public class PersianFormatterUtil {
      * @param mirrorCharsText input text consists of mirror characters
      * @return result of changing mirror characters
      */
-    public static String convertMirrorChars(String mirrorCharsText) {
+    @NotNull
+    private static String convertMirrorChars(String mirrorCharsText) {
         Map<Integer, Character> mirrorsMap = new HashMap<Integer, Character>();
         char[] mirrorChars = new char[mirrorCharsText.length()];
         mirrorCharsText.getChars(0, mirrorCharsText.length(), mirrorChars, 0);
@@ -114,7 +119,8 @@ public class PersianFormatterUtil {
      * @param inputText A Persian text consists of number or non-Persian characters
      * @return result of method after reversing numbers and non-Persian characters
      */
-    public static String reverseNumberAndNonPersianCharacters(String inputText) {
+    @NotNull
+    private static String reverseNumberAndNonPersianCharacters(String inputText) {
 
         Pattern p = Pattern.compile("(([\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]+[\\u0021-\\u007E\\u00A1-\\u05FF\\u0660-\\u066D\\u06F0-\\u06F9\\u0700-\\uFFFF][\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]*)|" +
                 "([\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]+[\\u0000-\\u001F\\u007F-\\u00A0]*[\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]*)|" +
@@ -147,5 +153,18 @@ public class PersianFormatterUtil {
             sbAfterChange.append(lastPartString);
         }
         return sbAfterChange.toString();
+    }
+
+    /**
+     * This method used as facade method to encapsulate Persian characters formatting
+     * @param inputText is input value for applying formatting
+     * @return after applying formatting methods, prepared text will turn back
+     */
+    public String persianFormatter(String inputText) {
+        String result = PersianFormatterUtil.convertNumberChars(inputText);
+        result = PersianFormatterUtil.convertSpecialChars(result);
+        result = PersianFormatterUtil.convertMirrorChars(result);
+        result = PersianFormatterUtil.reverseNumberAndNonPersianCharacters(result);
+        return result;
     }
 }
