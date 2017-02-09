@@ -98,6 +98,7 @@ public class PersianFormatterUtilTest {
         testStrings.add("1  |   شربت پرتقال14   |   2   |  1392528  |  0)0.0(  | 125326 |");
         testStrings.add("============================================================================");
         testStrings.add("جمع کل: 278560056 جمع اضافات: 250652 جمع تخفیفات: 0.0");
+        testStrings.add("2 || شربت پرتقال13      2 || 139538  || 0(12.346%)  || 125326");
 
         int counter = 1;
         for (String input : testStrings) {

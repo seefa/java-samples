@@ -22,7 +22,7 @@ class PersianFormatterUtil implements PersianFormatter {
      * @return converted String Persian number charsets to Latin unicode
      */
     @NotNull
-    private static String convertNumberChars(String persianNumberText) {
+    public static String convertNumberChars(String persianNumberText) {
         persianNumberText = persianNumberText
                 .replace('\u06F0', '\u0030')
                 .replace('\u06F1', '\u0031')
@@ -57,7 +57,7 @@ class PersianFormatterUtil implements PersianFormatter {
      * @return converted String after replacing supported characters
      */
     @NotNull
-    private static String convertSpecialChars(String persianCharsText) {
+    public static String convertSpecialChars(String persianCharsText) {
 
         persianCharsText = persianCharsText
                 .replace('\u061F', '\u003F')    // Question mark
@@ -74,7 +74,8 @@ class PersianFormatterUtil implements PersianFormatter {
                 .replace('\u06C1', '\u0647')    // Heh char
                 .replace('\u06C2', '\u0647')    // Heh char
                 .replace('\u0691', '\u0698')    // Heh char
-                .replace('\u0688', '\u0698');   // Heh char
+                .replace('\u0688', '\u0698')    // Heh char
+                .replace('\u060C','\u002C');    // comma char
 
         return persianCharsText;
     }
@@ -86,7 +87,7 @@ class PersianFormatterUtil implements PersianFormatter {
      * @return result of changing mirror characters
      */
     @NotNull
-    private static String convertMirrorChars(String mirrorCharsText) {
+    public static String convertMirrorChars(String mirrorCharsText) {
         Map<Integer, Character> mirrorsMap = new HashMap<Integer, Character>();
         char[] mirrorChars = new char[mirrorCharsText.length()];
         mirrorCharsText.getChars(0, mirrorCharsText.length(), mirrorChars, 0);
@@ -120,13 +121,25 @@ class PersianFormatterUtil implements PersianFormatter {
      * @return result of method after reversing numbers and non-Persian characters
      */
     @NotNull
-    private static String reverseNumberAndNonPersianCharacters(String inputText) {
+    public static String reverseNumberAndNonPersianCharacters(String inputText) {
 
         Pattern p = Pattern.compile("(([\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]+[\\u0021-\\u007E\\u00A1-\\u05FF\\u0660-\\u066D\\u06F0-\\u06F9\\u0700-\\uFFFF][\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]*)|" +
                 "([\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]+[\\u0000-\\u001F\\u007F-\\u00A0]*[\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]*)|" +
-                "([-\\u0000-\\u0020\\u007F-\\u00A0(){}|]+[:\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]+))");
+                "([\\u0000-\\u0020\\u007F-\\u00A0]+[\\u0600-\\u065F\\u066A-\\u06EF\\u06FA-\\u06FF]+)|" +
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u0028]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // (
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u0029]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // )
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u007C]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // |
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u007B]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // {
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u007D]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // }
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u002D]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // -
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u003C]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // <
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u003E]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // >
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u002B]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // +
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u002C]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // ,
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u0020]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // space
+                "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u003A]+[\\u0000-\\u001F\\u007F-\\u00A0]*))");
 
-        Matcher m = p.matcher(inputText);
+                Matcher m = p.matcher(inputText);
         StringBuilder sbAfterChange = new StringBuilder();
         int firstIndex = 0;
         while (m.find()) {
