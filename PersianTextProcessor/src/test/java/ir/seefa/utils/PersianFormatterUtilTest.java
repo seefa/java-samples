@@ -46,6 +46,7 @@ public class PersianFormatterUtilTest {
 
         List<String> testStrings = new ArrayList<String>();
         // sample text from http://www.hamyarit.com and http://uut.ac.ir and http://seefa.ir and http://118.tct.ir
+        testStrings.add("سلام بر تست Hi This is my test for English و 123-444-987");
         testStrings.add("امروزه افراد زیادی از واژه پرداز محبوب شرکت مایکروسافت یعنی “واژه پرداز مایکروسافت ورد” استفاده میکنند، این نرم\u200Cافزار در میان کاربران فارسی زبان نیز از اهمیت ویژه\u200Cای برخوردار است و خیلی از کاربران ویندوز اعم از کاربران حرفه\u200Cای و آماتور از این برنامه برای ایجاد و ویرایش اسناد متنی خود استفاده میکند، این ابزار با امکانات و ویژگی\u200Cهای منحصر به فرد خود کاربران زیادی را جذب کرده است و امکان ویرایش متون به اکثر زبان\u200Cهای رایج دنیا در آن وجود دارد که زبان فارسی نیز یکی از آن\u200Cهاست، در ادامه با همیار آی\u200Cتی همراه باشید تا با هم نحوه نگارش صحیح جملات فارسی را در نرم\u200Cافزار مایکروسافت ورد مرور کنیم.");
         testStrings.add("توجه: این کار تمام جملات شما را به صورت راست\u200Cچین نمایش میدهد، برای ارائه یک متن مرتب بهتر است Alignment را در حالت Justify قرار دهید.");
         testStrings.add("یکی از راه\u200Cهای تنظیم فونت استفاده از منوی Font در تب Home میباشد ولی اگر بخواهید فونت خاصی را به کل نوشته اختصاص دهید (به صورت مجزا برای کلمات فارسی و انگلیسی) باید طبق روش زیر عمل کنید.\n" +
@@ -103,7 +104,10 @@ public class PersianFormatterUtilTest {
         int counter = 1;
         for (String input : testStrings) {
             System.out.println("Text " + counter + " : \t\t\t" + input);
-            System.out.println("Reversed Text " + counter + " : \t" + PersianFormatterUtil.reverseNumberAndNonPersianCharacters(input));
+            String result = PersianFormatterUtil.reverseNumberAndNonPersianCharacters(input);
+            String result1 = PersianFormatterUtil.reverseNumberAndNonPersianWords(result);
+            System.out.println("Reversed OrgText " + counter + " : \t" + result);
+            System.out.println("Reversed RevText " + counter + " : \t" + result1);
             counter++;
             System.out.println("---------------------------------------");
         }

@@ -168,6 +168,40 @@ class PersianFormatterUtil implements PersianFormatter {
         return sbAfterChange.toString();
     }
 
+    /***
+     * This method used for detecting numbers and non-Persian characters for reversing them, because they print incorrect in RTL printing.
+     * @param inputText A Persian text consists of number or non-Persian characters
+     * @return result of method after reversing numbers and non-Persian characters
+     */
+    @NotNull
+    public static String reverseNumberAndNonPersianWords(String inputText) {
+        // TODO: Detect numbers too
+        Pattern p = Pattern.compile("([a-zA-Z]+[\\s]+){2,}");
+        Matcher m = p.matcher(inputText);
+        StringBuilder sbAfterChange = new StringBuilder();
+        while (m.find()) {
+            String words = m.group();
+            Pattern p2 = Pattern.compile("[a-zA-Z]+[\\s]+");
+            Matcher m2 = p2.matcher(words);
+            StringBuffer sbWords = new StringBuffer();
+            while (m2.find()) {
+                String oneWord = m2.group();
+                Pattern p3 = Pattern.compile("[a-zA-Z]+");
+                Matcher m3 = p3.matcher(oneWord);
+                while (m3.find()) {
+                    String word = m3.group();
+                    String lastPart = oneWord.substring(m3.group().length(), oneWord.length());
+                    sbWords.insert(0, word + lastPart);
+                }
+            }
+            sbAfterChange.append(inputText.substring(0, inputText.indexOf(words)));
+            sbAfterChange.append(sbWords);
+            sbAfterChange.append(inputText.substring(sbAfterChange.length(), inputText.length()));
+        }
+        return sbAfterChange.toString();
+    }
+
+
     /**
      * This method used as facade method to encapsulate Persian characters formatting
      * @param inputText is input value for applying formatting
@@ -178,6 +212,7 @@ class PersianFormatterUtil implements PersianFormatter {
         result = PersianFormatterUtil.convertSpecialChars(result);
         result = PersianFormatterUtil.convertMirrorChars(result);
         result = PersianFormatterUtil.reverseNumberAndNonPersianCharacters(result);
+        result = PersianFormatterUtil.reverseNumberAndNonPersianWords(result);
         return result;
     }
 }
