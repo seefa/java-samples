@@ -175,18 +175,23 @@ class PersianFormatterUtil implements PersianFormatter {
      */
     @NotNull
     public static String reverseNumberAndNonPersianWords(String inputText) {
-        // TODO: Detect numbers too
-        Pattern p = Pattern.compile("([a-zA-Z]+[\\s]+){2,}");
+        // TODO: Detect numbers too -- LOGIC HAS PROBLEM
+        Pattern p = Pattern.compile("(([a-zA-Z]+[\\s]+){2,})|(([0-9]+[\\s]*[-]+[\\s]*){2,})");
         Matcher m = p.matcher(inputText);
         StringBuilder sbAfterChange = new StringBuilder();
+        int position = 0;
         while (m.find()) {
             String words = m.group();
-            Pattern p2 = Pattern.compile("[a-zA-Z]+[\\s]+");
+            if(inputText.indexOf(words) > position) {
+                sbAfterChange.append(inputText.substring(position, inputText.indexOf(words)));
+                position = inputText.indexOf(words) + words.length();
+            }
+            Pattern p2 = Pattern.compile("([a-zA-Z]+[\\s]+)|([0-9]+[\\s]*[-]+[\\s]*)");
             Matcher m2 = p2.matcher(words);
             StringBuffer sbWords = new StringBuffer();
             while (m2.find()) {
                 String oneWord = m2.group();
-                Pattern p3 = Pattern.compile("[a-zA-Z]+");
+                Pattern p3 = Pattern.compile("[a-zA-Z0-9]+");
                 Matcher m3 = p3.matcher(oneWord);
                 while (m3.find()) {
                     String word = m3.group();
@@ -194,9 +199,12 @@ class PersianFormatterUtil implements PersianFormatter {
                     sbWords.insert(0, word + lastPart);
                 }
             }
-            sbAfterChange.append(inputText.substring(0, inputText.indexOf(words)));
+//            sbAfterChange.append(inputText.substring(0, inputText.indexOf(words)));
             sbAfterChange.append(sbWords);
-            sbAfterChange.append(inputText.substring(sbAfterChange.length(), inputText.length()));
+//            sbAfterChange.append(inputText.substring(sbAfterChange.length(), inputText.length()));
+        }
+        if(position < inputText.length()){
+            sbAfterChange.append(inputText.substring(position, inputText.length()));
         }
         return sbAfterChange.toString();
     }
