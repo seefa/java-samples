@@ -75,7 +75,7 @@ class PersianFormatterUtil implements PersianFormatter {
                 .replace('\u06C2', '\u0647')    // Heh char
                 .replace('\u0691', '\u0698')    // Heh char
                 .replace('\u0688', '\u0698')    // Heh char
-                .replace('\u060C','\u002C');    // comma char
+                .replace('\u060C', '\u002C');    // comma char
 
         return persianCharsText;
     }
@@ -139,7 +139,7 @@ class PersianFormatterUtil implements PersianFormatter {
                 "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u0020]+[\\u0000-\\u001F\\u007F-\\u00A0]*)|" + // space
                 "([\\u0000-\\u001F\\u007F-\\u00A0]*[\\u003A]+[\\u0000-\\u001F\\u007F-\\u00A0]*))");
 
-                Matcher m = p.matcher(inputText);
+        Matcher m = p.matcher(inputText);
         StringBuilder sbAfterChange = new StringBuilder();
         int firstIndex = 0;
         while (m.find()) {
@@ -175,35 +175,38 @@ class PersianFormatterUtil implements PersianFormatter {
      */
     @NotNull
     public static String reverseNumberAndNonPersianWords(String inputText) {
-        // TODO: Detect numbers too -- LOGIC HAS PROBLEM
-        Pattern p = Pattern.compile("(([a-zA-Z]+[\\s]+){2,})|(([0-9]+[\\s]*[-]+[\\s]*){2,})");
+        // TODO: A5-B4 had problem
+        Pattern p = Pattern.compile("(([a-zA-Z]+[-\\s,]+){2,})|([0-9]+[a-zA-Z]*[-]+[0-9a-zA-Z\\s]*){2,}|([0-9]+[a-zA-Z]*[-]+[0-9a-zA-Z\\s]+)");
         Matcher m = p.matcher(inputText);
         StringBuilder sbAfterChange = new StringBuilder();
         int position = 0;
         while (m.find()) {
             String words = m.group();
-            if(inputText.indexOf(words) > position) {
+            if (inputText.indexOf(words) > position) {
                 sbAfterChange.append(inputText.substring(position, inputText.indexOf(words)));
                 position = inputText.indexOf(words) + words.length();
             }
-            Pattern p2 = Pattern.compile("([a-zA-Z]+[\\s]+)|([0-9]+[\\s]*[-]+[\\s]*)");
+            Pattern p2 = Pattern.compile("([a-zA-Z]+[-\\s,]+)|([0-9]+[a-zA-Z]*[-\\s]*)");
             Matcher m2 = p2.matcher(words);
             StringBuffer sbWords = new StringBuffer();
             while (m2.find()) {
                 String oneWord = m2.group();
-                Pattern p3 = Pattern.compile("[a-zA-Z0-9]+");
+                Pattern p3 = Pattern.compile("([a-zA-Z]+)|([0-9]+[a-zA-Z]*)");
                 Matcher m3 = p3.matcher(oneWord);
                 while (m3.find()) {
                     String word = m3.group();
                     String lastPart = oneWord.substring(m3.group().length(), oneWord.length());
-                    sbWords.insert(0, word + lastPart);
+                    if (lastPart.equals(" "))
+                        sbWords.insert(0, word + lastPart);
+                    else
+                        sbWords.insert(0, lastPart + word);
                 }
             }
 //            sbAfterChange.append(inputText.substring(0, inputText.indexOf(words)));
             sbAfterChange.append(sbWords);
 //            sbAfterChange.append(inputText.substring(sbAfterChange.length(), inputText.length()));
         }
-        if(position < inputText.length()){
+        if (position < inputText.length()) {
             sbAfterChange.append(inputText.substring(position, inputText.length()));
         }
         return sbAfterChange.toString();
@@ -212,6 +215,7 @@ class PersianFormatterUtil implements PersianFormatter {
 
     /**
      * This method used as facade method to encapsulate Persian characters formatting
+     *
      * @param inputText is input value for applying formatting
      * @return after applying formatting methods, prepared text will turn back
      */
